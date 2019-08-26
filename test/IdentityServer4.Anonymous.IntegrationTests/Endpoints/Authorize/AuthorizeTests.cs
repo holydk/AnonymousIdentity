@@ -1320,8 +1320,6 @@ namespace IdentityServer4.Anonymous.IntegrationTests.Endpoints.Authorize
             ((string)result["access_token"]).Should().NotBeNull();
             ((string)result["state"]).Should().Be("123_state");
             ((string)result["scope"]).Should().Be("openid api2");
-
-            var type = Type.GetType("IdentityServer4.Stores.QueryStringAuthorizationParametersMessageStore, IdentityServer4");
         }
     }
 }
