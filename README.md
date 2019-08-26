@@ -10,7 +10,7 @@ IdentityServer4.Anonymous is built against the latest ASP.NET Core 2.
 ## Getting Started
 * Install nuget package to a new or existing project
 ```sh
-Install-Package IdentityServer4.Anonymous
+Install-Package Holydk.IdentityServer4.Anonymous
 ```
 * Add anonymous authentication to the identity server builder after all registration (it's necessary)
 ```csharp
