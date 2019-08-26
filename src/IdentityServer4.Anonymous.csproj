@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Holydk.IdentityServer4.Anonymous</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Dmitry Kiselev</Authors>
     <PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer;anonymous_users;anonymous_tokens</PackageTags>
     <PackageProjectUrl>https://github.com/holydk/IdentityServer4.Anonymous</PackageProjectUrl>
