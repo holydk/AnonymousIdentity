@@ -1,6 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>IdentityServer4.Anonymous</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Dmitry Kiselev</Authors>
+    <PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer;anonymous_users;anonymous_tokens</PackageTags>
+    <PackageProjectUrl>https://github.com/holydk/IdentityServer4.Anonymous</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>https://github.com/holydk/IdentityServer4.Anonymous/releases</PackageReleaseNotes>
+
+    <!-- Declare that the Repository URL can be published to NuSpec -->
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="IdentityServer4" Version="2.5.2"/>
