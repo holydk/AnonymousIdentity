@@ -49,5 +49,13 @@ namespace IdentityServer4.Anonymous.Configuration
         /// This setting is typically used when AddPolicyScheme is used in the host as the default scheme.
         /// </summary>
         public string CookieAuthenticationScheme { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the check shared session endpoint is enabled.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the check shared session endpoint is enabled; otherwise, <c>false</c>.
+        /// </value>
+        public bool EnableCheckSharedSessionEndpoint { get; set; } = true;
     }
 }

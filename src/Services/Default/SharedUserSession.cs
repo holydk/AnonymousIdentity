@@ -231,7 +231,7 @@ namespace IdentityServer4.Anonymous.Services
         /// <param name="sid"></param>
         protected virtual void IssueSessionIdCookie(string sid)
         {
-            if (_options.Endpoints.EnableCheckSessionEndpoint)
+            if (_options.EnableCheckSharedSessionEndpoint)
             {
                 if (_httpContext.Request.Cookies[_checkSessionCookieName] != sid)
                 {
