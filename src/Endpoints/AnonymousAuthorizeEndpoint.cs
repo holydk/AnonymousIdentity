@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using IdentityServer4.Anonymous.Configuration;
 using IdentityServer4.Anonymous.Endpoints.Results;
 using IdentityServer4.Anonymous.Services;
 using IdentityServer4.Extensions;
@@ -26,7 +25,6 @@ namespace IdentityServer4.Anonymous.Endpoints
         private readonly IEndpointHandlerProvider _handlerProvider;
         private readonly IAuthorizeResponseGenerator _authorizeResponseGenerator;
         private readonly IAnonymousUserFactory _anonUserFactory;
-        private readonly AnonymousIdentityServerOptions _anonIdsrvOptions;
 
         #endregion
 
@@ -39,8 +37,7 @@ namespace IdentityServer4.Anonymous.Endpoints
             IAuthorizeRequestValidator validator,
             IEndpointHandlerProvider handlerProvider,
             IAuthorizeResponseGenerator authorizeResponseGenerator,
-            IAnonymousUserFactory anonUserFactory,
-            AnonymousIdentityServerOptions anonIdsrvOptions
+            IAnonymousUserFactory anonUserFactory
         )
         {
             _userSession = userSession;
@@ -50,7 +47,6 @@ namespace IdentityServer4.Anonymous.Endpoints
             _handlerProvider = handlerProvider;
             _authorizeResponseGenerator = authorizeResponseGenerator;
             _anonUserFactory = anonUserFactory;
-            _anonIdsrvOptions = anonIdsrvOptions;
         }
             
         #endregion
