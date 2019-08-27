@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 
 #pragma warning disable 1591
 
-namespace IdentityServer4.Anonymous.Infrastructure
+namespace AnonymousIdentity.Infrastructure
 {
     public class NameValueCollectionConverter : JsonConverter
     {

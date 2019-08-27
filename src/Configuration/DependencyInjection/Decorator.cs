@@ -1,6 +1,6 @@
 using System;
 
-namespace IdentityServer4.Anonymous.Configuration.DependencyInjection
+namespace AnonymousIdentity.Configuration.DependencyInjection
 {
     internal class Decorator<TService>
     {

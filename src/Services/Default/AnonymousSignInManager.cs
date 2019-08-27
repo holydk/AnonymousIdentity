@@ -4,9 +4,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
-using IdentityServer4.Anonymous.Configuration;
+using AnonymousIdentity.Configuration;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Provides the APIs for anonymous user sign in.

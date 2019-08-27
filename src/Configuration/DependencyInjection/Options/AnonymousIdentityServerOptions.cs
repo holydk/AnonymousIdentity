@@ -1,4 +1,4 @@
-namespace IdentityServer4.Anonymous.Configuration
+namespace AnonymousIdentity.Configuration
 {
     /// <summary>
     /// The anonymous identity server options.
@@ -21,7 +21,7 @@ namespace IdentityServer4.Anonymous.Configuration
         /// otherwise will be included if requested with scope/resource.
         /// (claim "aid" should be contains in scope/resource). (defaults to true)
         /// </summary>
-        /// <seealso cref="IdentityServer4.Services.IProfileService"/>
+        /// <seealso cref="AnonymousIdentity.Services.IProfileService"/>
         public bool AlwaysIncludeAnonymousIdInProfile { get; set; } = true;
 
         /// <summary>

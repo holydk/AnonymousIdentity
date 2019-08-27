@@ -1,10 +1,10 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityServer4.Anonymous.Configuration;
+using AnonymousIdentity.Configuration;
 using Microsoft.AspNetCore.Authentication;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Provides a default implementation a factory to create a System.Security.Claims.ClaimsPrincipal from a anonymous user.

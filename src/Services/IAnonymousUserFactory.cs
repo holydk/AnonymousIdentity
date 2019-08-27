@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Provides an abstraction for a factory to create IAnonymousUser.

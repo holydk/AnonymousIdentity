@@ -2,7 +2,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Models a shared session between anonymous user and real authenticated user.

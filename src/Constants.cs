@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("IdentityServer4.Anonymous.UnitTests")]
-[assembly: InternalsVisibleTo("IdentityServer4.Anonymous.IntegrationTests")]
-namespace IdentityServer4.Anonymous
+[assembly: InternalsVisibleTo("AnonymousIdentity.UnitTests")]
+[assembly: InternalsVisibleTo("AnonymousIdentity.IntegrationTests")]
+namespace AnonymousIdentity
 {
     internal static class Constants
     {

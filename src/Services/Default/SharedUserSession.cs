@@ -3,13 +3,14 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using IdentityModel;
-using IdentityServer4.Anonymous.Configuration;
-using IdentityServer4.Anonymous.Infrastructure;
-using IdentityServer4.Extensions;
+using AnonymousIdentity.Configuration;
+using AnonymousIdentity.Infrastructure;
+using AnonymousIdentity.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using IdentityServer4.Extensions;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Cookie-based session implementation.

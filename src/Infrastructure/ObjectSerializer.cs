@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace IdentityServer4.Anonymous.Infrastructure
+namespace AnonymousIdentity.Infrastructure
 {
     internal static class ObjectSerializer
     {

@@ -1,7 +1,6 @@
-# anonymous
 ""
 "###########################################"
-"######## IdentityServer4.Anonymous ########"
+"############ AnonymousIdentity ############"
 "###########################################"
 ""
 $ErrorActionPreference = "Stop";

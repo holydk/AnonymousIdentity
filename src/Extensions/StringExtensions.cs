@@ -1,6 +1,6 @@
 using System.Text.Encodings.Web;
 
-namespace IdentityServer4.Extensions
+namespace AnonymousIdentity.Extensions
 {
     internal static class StringExtensions
     {

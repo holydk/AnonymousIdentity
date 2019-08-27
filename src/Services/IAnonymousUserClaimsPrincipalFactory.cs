@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Provides an abstraction for a factory to create a System.Security.Claims.ClaimsPrincipal from a anonymous user.

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Provides the APIs to create IAnonymousUser.

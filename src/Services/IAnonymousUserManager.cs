@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Provides the APIs for managing anonymous user.

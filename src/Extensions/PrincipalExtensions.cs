@@ -1,9 +1,8 @@
 using System;
 using System.Security.Claims;
 using System.Security.Principal;
-using IdentityServer4.Anonymous;
 
-namespace IdentityServer4.Extensions
+namespace AnonymousIdentity.Extensions
 {
     /// <summary>
     /// Extension methods for <see cref="System.Security.Principal.IPrincipal"/>.

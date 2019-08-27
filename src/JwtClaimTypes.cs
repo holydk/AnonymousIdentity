@@ -1,4 +1,4 @@
-namespace IdentityServer4.Anonymous
+namespace AnonymousIdentity
 {
     public static class JwtClaimTypes
     {

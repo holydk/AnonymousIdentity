@@ -1,10 +1,10 @@
 using System;
 using System.Threading.Tasks;
-using IdentityServer4.Anonymous.Configuration;
-using IdentityServer4.Extensions;
+using AnonymousIdentity.Configuration;
+using AnonymousIdentity.Extensions;
 using Microsoft.AspNetCore.Http;
 
-namespace IdentityServer4.Anonymous.Services
+namespace AnonymousIdentity.Services
 {
     /// <summary>
     /// Provides a default cookie based implementation the APIs for managing anonymous user.

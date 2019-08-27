@@ -1,8 +1,8 @@
-# IdentityServer4.Anonymous
+# AnonymousIdentity
 The open source framework based on [IdentityServer4](https://github.com/IdentityServer/IdentityServer4) for anonymous token support.
 
 ## How to build
-IdentityServer4.Anonymous is built against the latest ASP.NET Core 2.
+AnonymousIdentity is built against the latest ASP.NET Core 2.
 
 * [Install](https://www.microsoft.com/net/download/core#/current) the latest .NET Core 2.x SDK
 * Run `build.ps1` in the root of the repo
@@ -10,7 +10,7 @@ IdentityServer4.Anonymous is built against the latest ASP.NET Core 2.
 ## Getting Started
 * Install nuget package to a new or existing project
 ```sh
-Install-Package Holydk.IdentityServer4.Anonymous
+Install-Package AnonymousIdentity
 ```
 * Add anonymous authentication to the identity server builder after all registration (it's necessary)
 ```csharp
@@ -110,7 +110,7 @@ Here, authentication method is anon. Claim ssid(shared session id) will be inclu
 ```
 Here, claim aid(anonymous id) equal claim sub from anonymous token, also claim ssid equal claim ssid from anonymous token.
 
-Check [Options](https://github.com/holydk/IdentityServer4.Anonymous/blob/master/src/Configuration/DependencyInjection/Options/AnonymousIdentityServerOptions.cs) to configure the anonymous token.
+Check [Options](https://github.com/holydk/AnonymousIdentity/blob/master/src/Configuration/DependencyInjection/Options/AnonymousIdentityServerOptions.cs) to configure the anonymous token.
 
 ## Contributing
 I'm very much open to any collaboration and contributions to this tool to enable additional scenarios. Pull requests are welcome, though please open an issue to discuss first. Security reviews are also much appreciated!
