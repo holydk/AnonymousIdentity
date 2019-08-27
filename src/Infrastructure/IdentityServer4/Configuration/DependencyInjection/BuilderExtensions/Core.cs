@@ -31,15 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddAnonymousAuthentication(this IIdentityServerBuilder builder)
         {
             builder.Services.AddAnonymousIdentity();
-
-            builder
-                .AddAnonymousCoreServices()
-                .AddAnonymousCookieAuthentication()
-                .AddAnonymousResponseGenerators()
-                .AddAnonymousValidators()
-                .AddAnonymousDecoratedEndpoints();
-
-            return builder;
+            return builder.AddAnonymousAuthenticationInternal();
         }
 
         /// <summary>
@@ -50,7 +42,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddAnonymousAuthentication(this IIdentityServerBuilder builder, Action<AnonymousIdentityServerOptions> setupAction)
         {
             builder.Services.AddAnonymousIdentity(setupAction);
-            return builder.AddAnonymousAuthentication();
+            return builder.AddAnonymousAuthenticationInternal();
         }
 
         /// <summary>
@@ -61,12 +53,29 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IIdentityServerBuilder AddAnonymousAuthentication(this IIdentityServerBuilder builder, IConfiguration configuration)
         {
             builder.Services.AddAnonymousIdentity(configuration);
-            return builder.AddAnonymousAuthentication();
+            return builder.AddAnonymousAuthenticationInternal();
         }
             
         #endregion
 
         #region Utilities
+
+        /// <summary>
+        /// Adds the anonymous authentication support to IdentityServer4.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
+        /// <returns></returns>
+        private static IIdentityServerBuilder AddAnonymousAuthenticationInternal(this IIdentityServerBuilder builder)
+        {
+            builder
+                .AddAnonymousCoreServices()
+                .AddAnonymousCookieAuthentication()
+                .AddAnonymousResponseGenerators()
+                .AddAnonymousValidators()
+                .AddAnonymousDecoratedEndpoints();
+
+            return builder;
+        }
 
         /// <summary>
         /// Adds the anonymous core services.
