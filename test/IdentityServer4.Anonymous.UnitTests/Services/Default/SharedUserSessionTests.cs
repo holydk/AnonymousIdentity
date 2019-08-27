@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using IdentityServer4.Anonymous.Configuration;
 using IdentityServer4.Anonymous.Services;
-using IdentityServer4.Configuration;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -25,7 +24,6 @@ namespace IdentityServer4.Anonymous.UnitTests.Services.Default
         private SharedUserSession _subject;
         private ClaimsPrincipal _user;
         private AuthenticationProperties _props;
-        private IdentityServerOptions _options = new IdentityServerOptions();
         private AnonymousIdentityServerOptions _anonOptions = new AnonymousIdentityServerOptions();
         private Mock<IHttpContextAccessor> _mockHttpContextAccessor;
         private Mock<IAuthenticationSchemeProvider> _mockAuthenticationSchemeProvider;
@@ -59,7 +57,6 @@ namespace IdentityServer4.Anonymous.UnitTests.Services.Default
                 _mockHttpContextAccessor.Object,
                 _mockAuthenticationSchemeProvider.Object,
                 _mockAuthenticationHandlerProvider.Object,
-                _options,
                 _anonOptions,
                 MockHelpers.CreateMockSystemClock().Object);
         }

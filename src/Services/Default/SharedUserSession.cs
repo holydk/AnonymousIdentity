@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Anonymous.Configuration;
 using IdentityServer4.Anonymous.Infrastructure;
-using IdentityServer4.Configuration;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -27,7 +26,7 @@ namespace IdentityServer4.Anonymous.Services
         private readonly HttpContext _httpContext;
         private readonly IAuthenticationSchemeProvider _schemes;
         private readonly IAuthenticationHandlerProvider _handlers;
-        private readonly IdentityServerOptions _options;
+        private readonly AnonymousIdentityServerOptions _options;
         private readonly ISystemClock _clock;
         private ClaimsPrincipal _principal;
         private AuthenticationProperties _properties;
@@ -40,8 +39,7 @@ namespace IdentityServer4.Anonymous.Services
             IHttpContextAccessor httpContextAccessor,
             IAuthenticationSchemeProvider schemes,
             IAuthenticationHandlerProvider handlers,
-            IdentityServerOptions options,
-            AnonymousIdentityServerOptions anonOptions,
+            AnonymousIdentityServerOptions options,
             ISystemClock clock)
         {
             _schemes = schemes;
@@ -49,7 +47,7 @@ namespace IdentityServer4.Anonymous.Services
             _options = options;
             _clock = clock;
             _httpContext = httpContextAccessor.HttpContext;
-            _checkSessionCookieName = anonOptions.CheckSharedSessionCookieName;
+            _checkSessionCookieName = _options.CheckSharedSessionCookieName;
         }
 
         #endregion
@@ -189,9 +187,9 @@ namespace IdentityServer4.Anonymous.Services
         // todo: remove this in 3.0 and use extension method on http context
         private async Task<string> GetCookieSchemeAsync()
         {
-            if (_options.Authentication.CookieAuthenticationScheme != null)
+            if (_options.CookieAuthenticationScheme != null)
             {
-                return _options.Authentication.CookieAuthenticationScheme;
+                return _options.CookieAuthenticationScheme;
             }
 
             var defaultScheme = await _schemes.GetDefaultAuthenticateSchemeAsync();

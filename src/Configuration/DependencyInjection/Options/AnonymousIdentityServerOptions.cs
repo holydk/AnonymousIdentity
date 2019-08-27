@@ -42,5 +42,12 @@ namespace IdentityServer4.Anonymous.Configuration
         /// </summary>
         /// <value></value>
         public string CheckAnonymousIdCookieName { get; set; } = IdentityServerConstants.DefaultCheckAnonymousIdCookieName;
+    
+        /// <summary>
+        /// Sets the cookie authenitcation scheme confgured by the host used for interactive users.
+        /// If not set, the scheme will inferred from the host's default authentication scheme or identity server provider.
+        /// This setting is typically used when AddPolicyScheme is used in the host as the default scheme.
+        /// </summary>
+        public string CookieAuthenticationScheme { get; set; }
     }
 }

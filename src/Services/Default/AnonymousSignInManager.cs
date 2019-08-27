@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication;
-using IdentityServer4.Configuration;
+using IdentityServer4.Anonymous.Configuration;
 
 namespace IdentityServer4.Anonymous.Services
 {
@@ -15,7 +15,7 @@ namespace IdentityServer4.Anonymous.Services
     {
         #region Fields
 
-        private readonly IdentityServerOptions _options;
+        private readonly AnonymousIdentityServerOptions _options;
         private readonly HttpContext _httpContext;
         private readonly IAuthenticationSchemeProvider _schemes;
         private readonly IAnonymousUserClaimsPrincipalFactory _anonPrincipalFactory;
@@ -25,7 +25,7 @@ namespace IdentityServer4.Anonymous.Services
         #region Ctor
 
         public AnonymousSignInManager(
-            IdentityServerOptions options,
+            AnonymousIdentityServerOptions options,
             IHttpContextAccessor httpContextAccessor,
             IAuthenticationSchemeProvider schemes,
             IAnonymousUserClaimsPrincipalFactory anonPrincipalFactory)
@@ -70,9 +70,9 @@ namespace IdentityServer4.Anonymous.Services
         // todo: remove this in 3.0 and use extension method on http context
         private async Task<string> GetCookieSchemeAsync()
         {
-            if (_options.Authentication.CookieAuthenticationScheme != null)
+            if (_options.CookieAuthenticationScheme != null)
             {
-                return _options.Authentication.CookieAuthenticationScheme;
+                return _options.CookieAuthenticationScheme;
             }
 
             var defaultScheme = await _schemes.GetDefaultAuthenticateSchemeAsync();

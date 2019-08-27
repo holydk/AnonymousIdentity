@@ -1,9 +1,9 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using IdentityServer4.Anonymous.Configuration;
 using IdentityServer4.Anonymous.Configuration.DependencyInjection;
 using IdentityServer4.Anonymous.Services;
-using IdentityServer4.Configuration;
 using IdentityServer4.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +21,7 @@ namespace IdentityServer4.Anonymous.Hosting
         private readonly IAuthenticationService _inner;
         private readonly IAuthenticationSchemeProvider _schemes;
         private readonly ISharedUserSession _session;
-        private readonly IdentityServerOptions _options;
+        private readonly AnonymousIdentityServerOptions _options;
         private readonly IAnonymousUserManager _anonUserManager;
 
         #endregion
@@ -32,7 +32,7 @@ namespace IdentityServer4.Anonymous.Hosting
             Decorator<IAuthenticationService> decorator,
             IAuthenticationSchemeProvider schemes,
             ISharedUserSession session,
-            IdentityServerOptions options,
+            AnonymousIdentityServerOptions options,
             IAnonymousUserManager anonUserManager
         )
         {
@@ -105,9 +105,9 @@ namespace IdentityServer4.Anonymous.Hosting
         // todo: remove this in 3.0 and use extension method on http context
         private async Task<string> GetCookieAuthenticationSchemeAsync()
         {
-            if (_options.Authentication.CookieAuthenticationScheme != null)
+            if (_options.CookieAuthenticationScheme != null)
             {
-                return _options.Authentication.CookieAuthenticationScheme;
+                return _options.CookieAuthenticationScheme;
             }
 
             var scheme = await _schemes.GetDefaultAuthenticateSchemeAsync();
