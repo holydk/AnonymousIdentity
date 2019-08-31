@@ -99,7 +99,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="builder">The builder.</param>
         /// <returns></returns>
-        public static IIdentityServerBuilder AddAnonymousCookieAuthentication(this IIdentityServerBuilder builder)
+        private static IIdentityServerBuilder AddAnonymousCookieAuthentication(this IIdentityServerBuilder builder)
         {
             builder.Services.AddSingleton<IPostConfigureOptions<IdentityServerOptions>, PostConfigureInternalCookieOptions>();
 
