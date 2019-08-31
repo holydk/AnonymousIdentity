@@ -4,6 +4,7 @@ using AnonymousIdentity.Configuration;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Configuration;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Configuration.DependencyInjection;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Endpoints;
+using AnonymousIdentity.Infrastructure.IdentityServer4.ResponseHandling;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Services;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Validation;
 using IdentityServer4.Configuration;

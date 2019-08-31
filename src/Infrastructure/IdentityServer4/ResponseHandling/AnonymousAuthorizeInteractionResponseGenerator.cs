@@ -5,7 +5,7 @@ using IdentityServer4.Models;
 using IdentityServer4.ResponseHandling;
 using IdentityServer4.Validation;
 
-namespace AnonymousIdentity.Infrastructure.IdentityServer4.Services
+namespace AnonymousIdentity.Infrastructure.IdentityServer4.ResponseHandling
 {
     /// <summary>
     /// this decorates the real IAuthorizeInteractionResponseGenerator and handles the case 
