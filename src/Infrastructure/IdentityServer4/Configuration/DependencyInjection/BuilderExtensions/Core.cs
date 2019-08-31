@@ -126,6 +126,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IIdentityServerBuilder AddAnonymousValidators(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransientDecorator<IAuthorizeRequestValidator, AnonymousAuthorizeRequestValidator>();
+            builder.Services.AddTransientDecorator<ITokenRequestValidator, AnonymousTokenRequestValidator>();
 
             return builder;
         }
