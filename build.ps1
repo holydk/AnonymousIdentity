@@ -1,3 +1,5 @@
+New-Item -ItemType Directory -Force -Path ./nuget
+
 ""
 "###########################################"
 "############ AnonymousIdentity ############"
