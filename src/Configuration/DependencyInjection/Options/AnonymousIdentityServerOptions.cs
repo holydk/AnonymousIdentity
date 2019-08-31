@@ -21,7 +21,7 @@ namespace AnonymousIdentity.Configuration
         /// otherwise will be included if requested with scope/resource.
         /// (claim "aid" should be contains in scope/resource). (defaults to true)
         /// </summary>
-        /// <seealso cref="AnonymousIdentity.Services.IProfileService"/>
+        /// <seealso cref="IdentityServer4.Services.IProfileService"/>
         public bool AlwaysIncludeAnonymousIdInProfile { get; set; } = true;
 
         /// <summary>
