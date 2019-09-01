@@ -114,6 +114,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IIdentityServerBuilder AddAnonymousResponseGenerators(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransientDecorator<IAuthorizeInteractionResponseGenerator, AnonymousAuthorizeInteractionResponseGenerator>();
+            builder.Services.AddTransientDecorator<IDiscoveryResponseGenerator, AnonymousDiscoveryResponseGenerator>();
 
             return builder;
         }
