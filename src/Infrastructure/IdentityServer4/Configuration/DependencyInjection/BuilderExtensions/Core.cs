@@ -4,6 +4,7 @@ using AnonymousIdentity.Configuration;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Configuration;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Configuration.DependencyInjection;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Endpoints;
+using AnonymousIdentity.Infrastructure.IdentityServer4.ResponseHandling;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Services;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Validation;
 using IdentityServer4.Configuration;
@@ -98,7 +99,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="builder">The builder.</param>
         /// <returns></returns>
-        public static IIdentityServerBuilder AddAnonymousCookieAuthentication(this IIdentityServerBuilder builder)
+        private static IIdentityServerBuilder AddAnonymousCookieAuthentication(this IIdentityServerBuilder builder)
         {
             builder.Services.AddSingleton<IPostConfigureOptions<IdentityServerOptions>, PostConfigureInternalCookieOptions>();
 
@@ -113,6 +114,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IIdentityServerBuilder AddAnonymousResponseGenerators(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransientDecorator<IAuthorizeInteractionResponseGenerator, AnonymousAuthorizeInteractionResponseGenerator>();
+            builder.Services.AddTransientDecorator<IDiscoveryResponseGenerator, AnonymousDiscoveryResponseGenerator>();
 
             return builder;
         }
@@ -125,6 +127,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IIdentityServerBuilder AddAnonymousValidators(this IIdentityServerBuilder builder)
         {
             builder.Services.AddTransientDecorator<IAuthorizeRequestValidator, AnonymousAuthorizeRequestValidator>();
+            builder.Services.AddTransientDecorator<ITokenRequestValidator, AnonymousTokenRequestValidator>();
 
             return builder;
         }

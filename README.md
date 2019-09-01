@@ -21,18 +21,32 @@ services.AddIdentityServer()
 * Done
 
 ## How it works
-* The request for anonymous user authentication to the authorize endpoint looks like this
-```sh
-GET /connect/authorize?
-    client_id=client1&
-    scope=openid email api1&
-    response_type=id_token token&
-    redirect_uri=https://myapp/callback&
-    state=abc&
-    nonce=xyz&
-    acr_values=0&
-    response_mode=json
-```
+- The request for anonymous token to the authorize endpoint looks like this
+  
+  - Implicit flow
+   ```sh
+   GET /connect/authorize?
+       client_id=client1&
+       scope=openid email api1&
+       response_type=id_token token&
+       redirect_uri=https://myapp/callback&
+       state=abc&
+       nonce=xyz&
+       acr_values=0&
+       response_mode=json
+   ```
+   - Code flow (PKCE is optional)
+   ```sh
+   GET /connect/authorize?
+       client_id=client1&
+       scope=openid email api1&
+       response_type=code&
+       redirect_uri=https://myapp/callback&
+       state=abc&
+       nonce=xyz&
+       acr_values=0&
+       response_mode=json
+   ```
 The difference between a regular and anonymous request in two parameters: acr_values=0 and response_mode=json.
 ```
 acr_values=0
@@ -42,7 +56,7 @@ The value "0" indicates the End-User authentication did not meet the requirement
 response_mode=json
 ```
 Json for friendly response without redirect.
-* The response will look like this
+* The response will look like this (the code flow must exchange the code for a token first)
 ```
 {
   "id_token":<id_token>,

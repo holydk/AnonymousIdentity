@@ -1223,7 +1223,7 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Authorize
         }
             
         #endregion
-        
+
         [Test]
         public async Task Anonymous_user_with_valid_request_and_implicit_flow_should_receive_authorization_response()
         {
@@ -1320,6 +1320,47 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Authorize
             ((string)result["access_token"]).Should().NotBeNull();
             ((string)result["state"]).Should().Be("123_state");
             ((string)result["scope"]).Should().Be("openid api2");
+        }
+
+        [Test]
+        public async Task Anonymous_user_with_valid_request_and_implicit_flow_should_receive_authorization_response_with_valid_access_token_expires_in()
+        {
+            _mockPipeline.AnonymousOptions.AccessTokenLifetime = 5000;
+            var url = _mockPipeline.CreateAuthorizeUrl(
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
+                state: "123_state",
+                nonce: "123_nonce",
+                acrValues: "0",
+                responseMode: "json");
+            var response = await _mockPipeline.BrowserClient.GetAsync(url);
+
+            var result = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            ((int)result["expires_in"]).Should().Be(5000);
+        }
+
+        [Test]
+        public async Task Authenticated_user_with_valid_anonymous_request_and_implicit_flow_should_receive_authorization_response_as_json_with_valid_access_token_expires_in()
+        {
+            await _mockPipeline.LoginAsync("bob");
+
+            var url = _mockPipeline.CreateAuthorizeUrl(
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
+                state: "123_state",
+                nonce: "123_nonce",
+                acrValues: "0",
+                responseMode: "json");
+            var response = await _mockPipeline.BrowserClient.GetAsync(url);
+
+            var result = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            ((int)result["expires_in"]).Should().Be(3600);
         }
     }
 }

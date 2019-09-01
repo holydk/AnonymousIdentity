@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AnonymousIdentity.Configuration;
 using IdentityModel.Client;
 using IdentityServer4;
 using IdentityServer4.Configuration;
@@ -37,12 +38,15 @@ namespace AnonymousIdentity.IntegrationTests
         public const string ErrorPage = BaseUrl + "/home/error";
 
         public const string AuthorizeEndpoint = BaseUrl + "/connect/authorize";
+        public const string TokenEndpoint = BaseUrl + "/connect/token";
 
         public TestServer Server { get; set; }
         public HttpMessageHandler Handler { get; set; }
 
         public BrowserClient BrowserClient { get; set; }
         public HttpClient BackChannelClient { get; set; }
+
+        public AnonymousIdentityServerOptions AnonymousOptions { get; set; }
 
         public IdentityServerOptions Options { get; set; }
         public List<Client> Clients { get; set; } = new List<Client>();
@@ -115,7 +119,10 @@ namespace AnonymousIdentity.IntegrationTests
             .AddInMemoryApiResources(ApiScopes)
             .AddTestUsers(Users)
             .AddDeveloperSigningCredential(persistKey: false)
-            .AddAnonymousAuthentication();
+            .AddAnonymousAuthentication(options =>
+            {
+                AnonymousOptions = options;
+            });
 
             OnPostConfigureServices?.Invoke(services);
         }

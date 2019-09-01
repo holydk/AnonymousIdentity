@@ -2,7 +2,10 @@ using System;
 using System.Collections.Specialized;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AnonymousIdentity.Configuration;
+using AnonymousIdentity.Extensions;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Configuration.DependencyInjection;
+using AnonymousIdentity.Services;
 using IdentityServer4.Validation;
 
 namespace AnonymousIdentity.Infrastructure.IdentityServer4.Validation
@@ -16,14 +19,30 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Validation
         #region Fields
 
         private readonly IAuthorizeRequestValidator _inner;
+        private readonly AnonymousIdentityServerOptions _options;
+        private readonly ISharedUserSession _userSession;
+        private readonly IAnonymousUserManager _anonUserManager;
+        private readonly IAnonymousSignInManager _anonSignInManager;
+        private readonly IAnonymousUserFactory _anonUserFactory;
 
         #endregion
 
         #region Ctor
 
-        public AnonymousAuthorizeRequestValidator(Decorator<IAuthorizeRequestValidator> decorator)
+        public AnonymousAuthorizeRequestValidator(
+            Decorator<IAuthorizeRequestValidator> decorator,
+            AnonymousIdentityServerOptions options,
+            ISharedUserSession userSession,
+            IAnonymousUserManager anonUserManager,
+            IAnonymousSignInManager anonSignInManager,
+            IAnonymousUserFactory anonUserFactory)
         {
             _inner = decorator.Instance;
+            _options = options;
+            _userSession = userSession;
+            _anonUserManager = anonUserManager;
+            _anonSignInManager = anonSignInManager;
+            _anonUserFactory = anonUserFactory;
         }
 
         #endregion
@@ -48,11 +67,31 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Validation
                 // the "json" response mode only for anonymous requests
                 parameters.Remove(IdentityModel.OidcConstants.AuthorizeRequest.ResponseMode);
 
-                // check the request and if valid, return "json" response mode back
                 var result = await _inner.ValidateAsync(parameters, subject);
                 if (!result.IsError)
                 {
+                    if (subject == null)
+                    {
+                        // create anon user
+                        var anonUser = await _anonUserFactory.CreateAsync();
+                        await _anonUserManager.CreateAsync(anonUser);
+                        
+                        // and sign in with "anon" authentication method
+                        await _anonSignInManager.SignInAsync(anonUser);
+                        
+                        // reload the current user
+                        result.ValidatedRequest.Subject = await _userSession.GetUserAsync();
+                    }
+
+                    // return "json" response mode back
                     result.ValidatedRequest.ResponseMode = OidcConstants.ResponseModes.Json;
+
+                    // set anonymous token lifetime
+                    // https://github.com/IdentityServer/IdentityServer4/issues/3578
+                    if (result.ValidatedRequest.Subject.IsAnonymous())
+                    {
+                        result.ValidatedRequest.AccessTokenLifetime = _options.AccessTokenLifetime;
+                    }
                 }
 
                 return result;
