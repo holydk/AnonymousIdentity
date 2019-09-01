@@ -51,11 +51,6 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Services
                 }
             }
 
-            if (request?.Subject?.IsAnonymous() == true)
-            {
-                ChangeTokenLifetime(token, _anonIdsrvOptions.AccessTokenLifetime);
-            }
-
             return token;
         }
 
@@ -63,9 +58,10 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Services
         {
             var token = await _inner.CreateIdentityTokenAsync(request);
 
-            if (request?.Subject?.IsAnonymous() == true)
+            // id token lifetime is not setup via request.
+            if (request.Subject?.IsAnonymous() == true)
             {
-                ChangeTokenLifetime(token, _anonIdsrvOptions.IdentityTokenLifetime);
+                token.Lifetime = _anonIdsrvOptions.IdentityTokenLifetime;
             }
 
             return token;
@@ -74,18 +70,6 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Services
         public Task<string> CreateSecurityTokenAsync(Token token)
         {
             return _inner.CreateSecurityTokenAsync(token);
-        }
-            
-        #endregion
-
-        #region Utilities
-
-        private void ChangeTokenLifetime(Token token, int lifetime)
-        {
-            if (token != null)
-            {
-                token.Lifetime = lifetime;
-            }
         }
             
         #endregion

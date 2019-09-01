@@ -20,12 +20,9 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Endpoints
         #region Fields
 
         private readonly ISharedUserSession _userSession;
-        private readonly IAnonymousUserManager _anonUserManager;
-        private readonly IAnonymousSignInManager _anonSignInManager;
         private readonly IAuthorizeRequestValidator _validator;
         private readonly IEndpointHandlerProvider _handlerProvider;
         private readonly IAuthorizeResponseGenerator _authorizeResponseGenerator;
-        private readonly IAnonymousUserFactory _anonUserFactory;
 
         #endregion
 
@@ -33,21 +30,15 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Endpoints
 
         public AnonymousAuthorizeEndpoint(
             ISharedUserSession userSession,
-            IAnonymousUserManager anonUserManager,
-            IAnonymousSignInManager anonSignInManager,
             IAuthorizeRequestValidator validator,
             IEndpointHandlerProvider handlerProvider,
-            IAuthorizeResponseGenerator authorizeResponseGenerator,
-            IAnonymousUserFactory anonUserFactory
+            IAuthorizeResponseGenerator authorizeResponseGenerator
         )
         {
             _userSession = userSession;
-            _anonUserManager = anonUserManager;
-            _anonSignInManager = anonSignInManager;
             _validator = validator;
             _handlerProvider = handlerProvider;
             _authorizeResponseGenerator = authorizeResponseGenerator;
-            _anonUserFactory = anonUserFactory;
         }
             
         #endregion
@@ -66,19 +57,6 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Endpoints
                     var request = result.ValidatedRequest;           
                     if (request.IsAnonymous() && request.ResponseMode == OidcConstants.ResponseModes.Json)
                     {
-                        if (user == null)
-                        {
-                            // create anon user
-                            var anonUser = await _anonUserFactory.CreateAsync();
-                            await _anonUserManager.CreateAsync(anonUser);
-                            
-                            // and sign in with "anon" authentication method
-                            await _anonSignInManager.SignInAsync(anonUser);
-                            
-                            // reload the current user
-                            request.Subject = await _userSession.GetUserAsync();
-                        }
-
                         var response = await _authorizeResponseGenerator.CreateResponseAsync(request);
 
                         return new AuthorizeResult(response);
