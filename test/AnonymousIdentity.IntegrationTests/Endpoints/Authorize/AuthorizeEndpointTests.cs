@@ -15,7 +15,7 @@ using IdentityServer4.Test;
 
 namespace AnonymousIdentity.IntegrationTests.Endpoints.Authorize
 {
-    public class AuthorizeTests
+    public class AuthorizeEndpointTests
     {
         #region Fields
 
@@ -1359,6 +1359,32 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Authorize
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
 
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            ((int)result["expires_in"]).Should().Be(3600);
+        }
+
+        [Test]
+        public async Task When_anonymous_user_is_authenticated_and_user_signs_in_with_implicit_flow_should_return_authorization_response_with_valid_access_token_expires_in()
+        {
+            _mockPipeline.AnonymousOptions.AccessTokenLifetime = 5000;
+            var url = _mockPipeline.CreateAuthorizeUrl(
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
+                state: "123_state",
+                nonce: "123_nonce",
+                acrValues: "0",
+                responseMode: "json");
+            var response = await _mockPipeline.BrowserClient.GetAsync(url);
+            var result = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            ((int)result["expires_in"]).Should().Be(5000);
+
+            await _mockPipeline.LoginAsync("bob");
+
+            response = await _mockPipeline.BrowserClient.GetAsync(url);
+            result = JObject.Parse(await response.Content.ReadAsStringAsync());
 
             ((int)result["expires_in"]).Should().Be(3600);
         }

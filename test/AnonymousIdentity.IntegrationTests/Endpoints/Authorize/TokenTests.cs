@@ -3,13 +3,12 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FluentAssertions;
-using IdentityModel.Client;
 using IdentityServer4.Models;
 using IdentityServer4.Test;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
-namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
+namespace AnonymousIdentity.IntegrationTests.Endpoints.Authorize
 {
     public class TokenTests
     {
@@ -29,24 +28,24 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
             _mockPipeline.Clients.AddRange(new Client[] {
                 new Client
                 {
-                    ClientId = "client4",
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequireClientSecret = false,
+                    ClientId = "client1",
+                    AllowedGrantTypes = GrantTypes.Implicit,
                     RequireConsent = false,
-                    AllowedScopes = new List<string> { "openid", "profile", "api1", "api2", "aid", "aid_idResource" },
-                    RedirectUris = new List<string> { "https://client4/callback" },
-                    AlwaysIncludeUserClaimsInIdToken = true,
+                    AllowedScopes = new List<string> { "openid", "profile", "aid" },
+                    RedirectUris = new List<string> { "https://client1/callback" },
+                    AllowAccessTokensViaBrowser = true,
                     AccessTokenLifetime = 3600,
                     IdentityTokenLifetime = 500
                 },
                 new Client
                 {
-                    ClientId = "client5",
-                    AllowedGrantTypes = GrantTypes.Code,
-                    RequireClientSecret = false,
+                    ClientId = "client2",
+                    AllowedGrantTypes = GrantTypes.Implicit,
                     RequireConsent = true,
-                    AllowedScopes = new List<string> { "openid", "profile", "api1", "api2", "aid" },
-                    RedirectUris = new List<string> { "https://client5/callback" }
+                    AllowedScopes = new List<string> { "openid", "profile", "api1", "api2", "aid", "aid_idResource" },
+                    RedirectUris = new List<string> { "https://client2/callback" },
+                    AllowAccessTokensViaBrowser = true,
+                    AlwaysIncludeUserClaimsInIdToken = true
                 }
             });
 
@@ -54,7 +53,6 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
             {
                 SubjectId = "bob",
                 Username = "bob",
-                Password = "password",
                 Claims = new Claim[]
                 {
                     new Claim("name", "Bob Loblaw"),
@@ -96,29 +94,22 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         }
             
         #endregion
-    
+
         [Test]
         public async Task Shared_session_id_should_be_included_in_anonymous_access_token_always()
         {
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.AccessToken);      
+            var token = _mockPipeline.ReadJwtToken(((string)result["access_token"]));
 
             token.Claims.Should().Contain(c => c.Type == JwtClaimTypes.SharedSessionId);
         }
@@ -128,24 +119,17 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         {
             _mockPipeline.AnonymousOptions.IncludeSharedSessionIdInAccessToken = false;
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.AccessToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["access_token"]));
 
             token.Claims.Should().NotContain(c => c.Type == JwtClaimTypes.SharedSessionId);
         }
@@ -155,83 +139,62 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         {
             await _mockPipeline.LoginAsync("bob");
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.AccessToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["access_token"]));
 
             token.Claims.Should().Contain(c => c.Type == JwtClaimTypes.SharedSessionId);
         }
 
         [Test]
-        [TestCase("AccessToken")]
-        [TestCase("IdentityToken")]
+        [TestCase("access_token")]
+        [TestCase("id_token")]
         public async Task Anonymous_token_should_contain_anonymous_authentication_method(string tokenName)
         {
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
-            
+            var token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
+
             token.Claims.Should().Contain(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod);
             token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod).
                 Value.Should().Be(OidcConstants.AuthenticationMethods.Anonymous);
         }
 
         [Test]
-        [TestCase("AccessToken")]
-        [TestCase("IdentityToken")]
+        [TestCase("access_token")]
+        [TestCase("id_token")]
         public async Task Authenticated_token_should_contain_pwd_authentication_method(string tokenName)
         {
             await _mockPipeline.LoginAsync("bob");
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            var token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             token.Claims.Should().Contain(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod);
             token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod).
@@ -239,29 +202,22 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         }
 
         [Test]
-        [TestCase("AccessToken")]
-        [TestCase("IdentityToken")]
+        [TestCase("access_token")]
+        [TestCase("id_token")]
         public async Task When_anonymous_user_is_authenticated_and_user_signs_in_token_should_contain_pwd_authentication_method(string tokenName)
         {
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            var token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             token.Claims.Should().Contain(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod);
             token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod).
@@ -271,14 +227,7 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
 
             response = await _mockPipeline.BrowserClient.GetAsync(url);
             result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             token.Claims.Should().Contain(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod);
             token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.AuthenticationMethod).
@@ -286,58 +235,44 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         }
 
         [Test]
-        [TestCase("AccessToken")]
-        [TestCase("IdentityToken")]
+        [TestCase("access_token")]
+        [TestCase("id_token")]
         public async Task Authenticated_token_should_not_contain_aid_if_client_not_requested_anonymous_token(string tokenName)
         {
             await _mockPipeline.LoginAsync("bob");
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            var token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             token.Claims.Should().NotContain(c => c.Type == JwtClaimTypes.AnonymousId);
         }
 
         [Test]
-        [TestCase("AccessToken")]
-        [TestCase("IdentityToken")]
+        [TestCase("access_token")]
+        [TestCase("id_token")]
         public async Task Authenticated_token_should_contain_aid_if_client_requested_anonymous_token_and_aid_always_include_in_access_token(string tokenName)
         {
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            var token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             var anonymousSubject = token.Subject;
 
@@ -345,14 +280,7 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
 
             response = await _mockPipeline.BrowserClient.GetAsync(url);
             result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             token.Claims.Should().Contain(c => c.Type == JwtClaimTypes.AnonymousId);
             token.Claims.First(c => c.Type == JwtClaimTypes.AnonymousId).
@@ -360,43 +288,29 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         }
 
         [Test]
-        [TestCase("AccessToken")]
-        [TestCase("IdentityToken")]
+        [TestCase("access_token")]
+        [TestCase("id_token")]
         public async Task Authenticated_token_should_not_contain_aid_if_client_requested_anonymous_token_and_not_requested_scope_aid(string tokenName)
         {
             _mockPipeline.AnonymousOptions.AlwaysIncludeAnonymousIdInProfile = false;
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            var token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             await _mockPipeline.LoginAsync("bob");
 
             response = await _mockPipeline.BrowserClient.GetAsync(url);
             result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            token = _mockPipeline.ReadJwtToken((string)typeof(TokenResponse).GetProperty(tokenName).GetValue(tokenResponse));
+            token = _mockPipeline.ReadJwtToken(((string)result[tokenName]));
 
             token.Claims.Should().NotContain(c => c.Type == JwtClaimTypes.AnonymousId);
         }
@@ -406,24 +320,17 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         {
             _mockPipeline.AnonymousOptions.AlwaysIncludeAnonymousIdInProfile = false;
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid aid",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2 aid",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.AccessToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["access_token"]));
 
             var anonymousSubject = token.Subject;
 
@@ -431,14 +338,7 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
 
             response = await _mockPipeline.BrowserClient.GetAsync(url);
             result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            token = _mockPipeline.ReadJwtToken(tokenResponse.AccessToken);
+            token = _mockPipeline.ReadJwtToken(((string)result["access_token"]));
 
             token.Claims.Should().Contain(c => c.Type == JwtClaimTypes.AnonymousId);
             token.Claims.First(c => c.Type == JwtClaimTypes.AnonymousId).
@@ -450,24 +350,17 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         {
             _mockPipeline.AnonymousOptions.AlwaysIncludeAnonymousIdInProfile = false;
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
-                scope: "openid aid_idResource",
-                redirectUri: "https://client4/callback",
+                clientId: "client2",
+                responseType: "id_token token",
+                scope: "openid api2 aid_idResource",
+                redirectUri: "https://client2/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.IdentityToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["id_token"]));
 
             var anonymousSubject = token.Subject;
 
@@ -475,14 +368,7 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
 
             response = await _mockPipeline.BrowserClient.GetAsync(url);
             result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            token = _mockPipeline.ReadJwtToken(tokenResponse.IdentityToken);
+            token = _mockPipeline.ReadJwtToken(((string)result["id_token"]));
 
             token.Claims.Should().Contain(c => c.Type == JwtClaimTypes.AnonymousId);
             token.Claims.First(c => c.Type == JwtClaimTypes.AnonymousId).
@@ -492,87 +378,67 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         [Test]
         public async Task Anonymous_access_token_should_contain_valid_expires_id()
         {
-            _mockPipeline.AnonymousOptions.AccessTokenLifetime = 1337;
+            _mockPipeline.AnonymousOptions.AccessTokenLifetime = 5000;
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
+                clientId: "client1",
+                responseType: "id_token token",
                 scope: "openid",
-                redirectUri: "https://client4/callback",
+                redirectUri: "https://client1/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.AccessToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["access_token"]));
 
             var nbf = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.NotBefore).Value);
             var exp = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.Expiration).Value);
 
-            (exp - nbf).Should().Be(1337);
+            (exp - nbf).Should().Be(5000);
         }
 
         [Test]
         public async Task Anonymous_id_token_should_contain_valid_expires_id()
         {
-            _mockPipeline.AnonymousOptions.IdentityTokenLifetime = 1337;
+            _mockPipeline.AnonymousOptions.IdentityTokenLifetime = 5000;
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
+                clientId: "client1",
+                responseType: "id_token token",
                 scope: "openid",
-                redirectUri: "https://client4/callback",
+                redirectUri: "https://client1/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.IdentityToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["id_token"]));
 
             var nbf = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.NotBefore).Value);
             var exp = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.Expiration).Value);
 
-            (exp - nbf).Should().Be(1337);
+            (exp - nbf).Should().Be(5000);
         }
 
         [Test]
         public async Task Authenticated_access_token_should_contain_valid_expires_id()
         {
-            _mockPipeline.AnonymousOptions.AccessTokenLifetime = 1337;
+            _mockPipeline.AnonymousOptions.AccessTokenLifetime = 5000;
             await _mockPipeline.LoginAsync("bob");
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
+                clientId: "client1",
+                responseType: "id_token token",
                 scope: "openid",
-                redirectUri: "https://client4/callback",
+                redirectUri: "https://client1/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.AccessToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["access_token"]));
+
             var nbf = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.NotBefore).Value);
             var exp = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.Expiration).Value);
 
@@ -582,27 +448,21 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         [Test]
         public async Task Authenticated_id_token_should_contain_valid_expires_id()
         {
-            _mockPipeline.AnonymousOptions.IdentityTokenLifetime = 1337;
+            _mockPipeline.AnonymousOptions.IdentityTokenLifetime = 5000;
             await _mockPipeline.LoginAsync("bob");
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client4",
-                responseType: "code",
+                clientId: "client1",
+                responseType: "id_token token",
                 scope: "openid",
-                redirectUri: "https://client4/callback",
+                redirectUri: "https://client1/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
             var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client4/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client4",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.IdentityToken);
+            var token = _mockPipeline.ReadJwtToken(((string)result["id_token"]));
+
             var nbf = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.NotBefore).Value);
             var exp = int.Parse(token.Claims.First(c => c.Type == IdentityModel.JwtClaimTypes.Expiration).Value);
 
@@ -613,37 +473,21 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
         public async Task Authenticated_id_token_should_not_contain_aid_if_client_requested_anonymous_token_and_aid_always_include_in_id_token_but_user_claims_not_includes_in_id_token()
         {
             var url = _mockPipeline.CreateAuthorizeUrl(
-                clientId: "client5",
-                responseType: "code",
+                clientId: "client1",
+                responseType: "id_token token",
                 scope: "openid",
-                redirectUri: "https://client5/callback",
+                redirectUri: "https://client1/callback",
                 state: "123_state",
                 nonce: "123_nonce",
                 acrValues: "0",
                 responseMode: "json");
             var response = await _mockPipeline.BrowserClient.GetAsync(url);
-            var result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client5/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client5",
-            });
-            var token = _mockPipeline.ReadJwtToken(tokenResponse.IdentityToken);
 
             await _mockPipeline.LoginAsync("bob");
 
             response = await _mockPipeline.BrowserClient.GetAsync(url);
-            result = JObject.Parse(await response.Content.ReadAsStringAsync());
-            tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
-            {
-                Code = (string)result["code"],
-                RedirectUri = "https://client5/callback",
-                Address = IdentityServerPipeline.TokenEndpoint,
-                ClientId = "client5",
-            });
-            token = _mockPipeline.ReadJwtToken(tokenResponse.IdentityToken);
+            var result = JObject.Parse(await response.Content.ReadAsStringAsync());
+            var token = _mockPipeline.ReadJwtToken(((string)result["id_token"]));
 
             token.Claims.Should().NotContain(c => c.Type == JwtClaimTypes.AnonymousId);
         }
