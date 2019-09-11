@@ -24,6 +24,13 @@ namespace AnonymousIdentity.Services
 
         #region Ctor
 
+        /// <summary>
+        /// Creates a new instance of <see cref="AnonymousSignInManager"/>.
+        /// </summary>
+        /// <param name="options">The anonymous options.</param>
+        /// <param name="httpContextAccessor">The http context accessor.</param>
+        /// <param name="schemes">The schemes provider.</param>
+        /// <param name="anonPrincipalFactory">The anonymous principal factory.</param>
         public AnonymousSignInManager(
             AnonymousIdentityServerOptions options,
             IHttpContextAccessor httpContextAccessor,

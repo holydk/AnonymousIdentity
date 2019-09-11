@@ -9,6 +9,11 @@ namespace AnonymousIdentity.Extensions
     /// </summary>
     public static class PrincipalExtensions
     {
+        /// <summary>
+        /// Check if <see cref="IPrincipal"/> is anonymous.
+        /// </summary>
+        /// <param name="principal">The principal.</param>
+        /// <returns>Return true if principal contains "anon" authentication method(amr) claim; otherwise false.</returns>
         public static bool IsAnonymous(this IPrincipal principal)
         {
             if (principal == null) throw new ArgumentNullException(nameof(principal));

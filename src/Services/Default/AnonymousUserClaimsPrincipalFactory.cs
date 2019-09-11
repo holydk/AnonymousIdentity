@@ -20,6 +20,11 @@ namespace AnonymousIdentity.Services
 
         #region Ctor
 
+        /// <summary>
+        /// Creates a new instance of <see cref="AnonymousUserClaimsPrincipalFactory"/>.
+        /// </summary>
+        /// <param name="options">The anonymous options.</param>
+        /// <param name="schemes">The schemes provider.</param>
         public AnonymousUserClaimsPrincipalFactory(
             AnonymousIdentityServerOptions options,
             IAuthenticationSchemeProvider schemes)

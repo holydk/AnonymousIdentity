@@ -1,3 +1,5 @@
+#pragma warning disable 1591
+
 namespace AnonymousIdentity
 {
     public static class OidcConstants
