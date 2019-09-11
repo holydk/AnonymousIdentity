@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -282,6 +283,12 @@ namespace AnonymousIdentity.IntegrationTests
                 codeChallengeMethod: codeChallengeMethod,
                 extra: extra);
             return url;
+        }
+
+        public JwtSecurityToken ReadJwtToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            return handler.ReadJwtToken(token);
         }
     }
 }

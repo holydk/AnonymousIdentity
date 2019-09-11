@@ -15,7 +15,7 @@ using IdentityServer4.Test;
 
 namespace AnonymousIdentity.IntegrationTests.Endpoints.Authorize
 {
-    public class AuthorizeTests
+    public class AuthorizeEndpointTests
     {
         #region Fields
 
