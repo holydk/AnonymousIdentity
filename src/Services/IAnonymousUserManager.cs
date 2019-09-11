@@ -29,7 +29,7 @@ namespace AnonymousIdentity.Services
         Task DeleteAsync(IAnonymousUser user);
 
         /// <summary>
-        /// Deletes the specified anonymous <paramref name="user"/> by id.
+        /// Deletes the specified anonymous user by id.
         /// </summary>
         /// <param name="userId">The user ID to delete for.</param>
         /// <returns></returns>

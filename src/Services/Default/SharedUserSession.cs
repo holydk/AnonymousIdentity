@@ -36,6 +36,14 @@ namespace AnonymousIdentity.Services
 
         #region Ctor
 
+        /// <summary>
+        /// Creates a new instance of <see cref="SharedUserSession"/>.
+        /// </summary>
+        /// <param name="httpContextAccessor">The http context accessor.</param>
+        /// <param name="schemes">The schemes provider.</param>
+        /// <param name="handlers">The authentication handler provider.</param>
+        /// <param name="options">The anonymous options.</param>
+        /// <param name="clock">The system of clock.</param>
         public SharedUserSession(
             IHttpContextAccessor httpContextAccessor,
             IAuthenticationSchemeProvider schemes,

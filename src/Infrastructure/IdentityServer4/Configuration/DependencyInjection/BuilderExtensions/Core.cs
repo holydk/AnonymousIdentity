@@ -28,7 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the anonymous authentication support to IdentityServer4.
         /// </summary>
         /// <param name="builder">The builder.</param>
-        /// <returns></returns>
+        /// <returns>The builder.</returns>
         public static IIdentityServerBuilder AddAnonymousAuthentication(this IIdentityServerBuilder builder)
         {
             builder.Services.AddAnonymousIdentity();
@@ -39,7 +39,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the anonymous authentication support to IdentityServer4.
         /// </summary>
         /// <param name="builder">The builder.</param>
-        /// <returns></returns>
+        /// <param name="setupAction">The setup actions.</param>
+        /// <returns>The builder.</returns>
         public static IIdentityServerBuilder AddAnonymousAuthentication(this IIdentityServerBuilder builder, Action<AnonymousIdentityServerOptions> setupAction)
         {
             builder.Services.AddAnonymousIdentity(setupAction);
@@ -50,7 +51,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the anonymous authentication support to IdentityServer4.
         /// </summary>
         /// <param name="builder">The builder.</param>
-        /// <returns></returns>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The builder.</returns>
         public static IIdentityServerBuilder AddAnonymousAuthentication(this IIdentityServerBuilder builder, IConfiguration configuration)
         {
             builder.Services.AddAnonymousIdentity(configuration);

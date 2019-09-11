@@ -22,6 +22,13 @@ namespace AnonymousIdentity.Services
 
         #region Ctor
 
+        /// <summary>
+        /// Creates a new instance of <see cref="CookieAnonymousUserManager"/>.
+        /// </summary>
+        /// <param name="httpContextAccessor">The http context accessor.</param>
+        /// <param name="anonUserFactory">The anonymous user factory.</param>
+        /// <param name="sharedUserSession">The shared session.</param>
+        /// <param name="anonOptions">The anonymous options.</param>
         public CookieAnonymousUserManager(
             IHttpContextAccessor httpContextAccessor,
             IAnonymousUserFactory anonUserFactory,
@@ -94,7 +101,7 @@ namespace AnonymousIdentity.Services
         }
 
         /// <summary>
-        /// Deletes the specified anonymous <paramref name="user"/> by id.
+        /// Deletes the specified anonymous user by id.
         /// </summary>
         /// <param name="userId">The user ID to delete for.</param>
         /// <returns></returns>

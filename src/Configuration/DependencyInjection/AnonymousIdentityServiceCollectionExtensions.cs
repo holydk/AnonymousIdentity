@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the AnonymousIdentity.
         /// </summary>
         /// <param name="sevices">The services.</param>
-        /// <returns></returns>
+        /// <returns>The services.</returns>
         public static IServiceCollection AddAnonymousIdentity(this IServiceCollection sevices)
         {
             return sevices
@@ -36,7 +36,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the AnonymousIdentity.
         /// </summary>
         /// <param name="sevices">The services.</param>
-        /// <returns></returns>
+        /// <param name="setupAction">The setup actions.</param>
+        /// <returns>The services.</returns>
         public static IServiceCollection AddAnonymousIdentity(this IServiceCollection sevices, Action<AnonymousIdentityServerOptions> setupAction)
         {
             sevices.Configure(setupAction);
@@ -47,7 +48,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds the AnonymousIdentity.
         /// </summary>
         /// <param name="sevices">The services.</param>
-        /// <returns></returns>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The services.</returns>
         public static IServiceCollection AddAnonymousIdentity(this IServiceCollection sevices, IConfiguration configuration)
         {
             sevices.Configure<AnonymousIdentityServerOptions>(configuration);
