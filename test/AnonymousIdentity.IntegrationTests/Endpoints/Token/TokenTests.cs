@@ -304,5 +304,47 @@ namespace AnonymousIdentity.IntegrationTests.Endpoints.Token
 
             ((int)result["expires_in"]).Should().Be(3600);
         }
+
+        [Test]
+        public async Task When_anonymous_user_is_authenticated_and_user_signs_in_with_code_flow_should_return_authorization_response_with_valid_access_token_expires_in()
+        {
+            _mockPipeline.AnonymousOptions.AccessTokenLifetime = 5000;
+            var url = _mockPipeline.CreateAuthorizeUrl(
+                clientId: "client4",
+                responseType: "code",
+                scope: "openid",
+                redirectUri: "https://client4/callback",
+                state: "123_state",
+                nonce: "123_nonce",
+                acrValues: "0",
+                responseMode: "json");
+            var response = await _mockPipeline.BrowserClient.GetAsync(url);
+            var result = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            var tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
+            {
+                Code = (string)result["code"],
+                RedirectUri = "https://client4/callback",
+                Address = IdentityServerPipeline.TokenEndpoint,
+                ClientId = "client4",
+            });
+
+            tokenResponse.ExpiresIn.Should().Be(5000);
+
+            await _mockPipeline.LoginAsync("bob");
+
+            response = await _mockPipeline.BrowserClient.GetAsync(url);
+            result = JObject.Parse(await response.Content.ReadAsStringAsync());
+
+            tokenResponse = await _mockPipeline.BrowserClient.RequestAuthorizationCodeTokenAsync(new AuthorizationCodeTokenRequest()
+            {
+                Code = (string)result["code"],
+                RedirectUri = "https://client4/callback",
+                Address = IdentityServerPipeline.TokenEndpoint,
+                ClientId = "client4",
+            });
+
+            tokenResponse.ExpiresIn.Should().Be(3600);
+        }
     }
 }
