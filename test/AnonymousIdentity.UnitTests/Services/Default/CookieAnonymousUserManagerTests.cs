@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -7,7 +6,6 @@ using FluentAssertions;
 using AnonymousIdentity.Configuration;
 using AnonymousIdentity.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Moq;
 using NUnit.Framework;
 
@@ -104,11 +102,11 @@ namespace AnonymousIdentity.UnitTests.Services.Default
         {
             _mockAnonymousUserFactory.Setup(m => m.CreateAsync(It.IsAny<string>())).ReturnsAsync(new AnonymousUser() { Id = "test" });
         
-            var cookies = new Dictionary<string, string>()
-            {
-                { _anonOptions.CheckAnonymousIdCookieName, "test" }
-            };
-            _mockHttpContextAccessor.Object.HttpContext.Request.Cookies = new RequestCookieCollection(cookies);
+            var cookie = new Cookie(_anonOptions.CheckAnonymousIdCookieName, "test", "/", ".server");
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(new Uri("http://server"), cookie);
+            string cookieHeader = cookieContainer.GetCookieHeader(new Uri("http://server"));
+            _mockHttpContextAccessor.Object.HttpContext.Request.Headers.Add("Cookie", cookieHeader);
 
             var user = await _subject.FindByIdAsync("test");
 
@@ -154,22 +152,22 @@ namespace AnonymousIdentity.UnitTests.Services.Default
         {
             _mockAnonymousUserFactory.Setup(m => m.CreateAsync(It.IsAny<string>())).ReturnsAsync(new AnonymousUser() { Id = "test" });
 
-            var reqCookies = new Dictionary<string, string>()
-            {
-                { _anonOptions.CheckAnonymousIdCookieName, "test" }
-            };
-            _mockHttpContextAccessor.Object.HttpContext.Request.Cookies = new RequestCookieCollection(reqCookies);
+            var cookie = new Cookie(_anonOptions.CheckAnonymousIdCookieName, "test", "/", ".server");
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(new Uri("http://server"), cookie);
+            string cookieHeader = cookieContainer.GetCookieHeader(new Uri("http://server"));
+            _mockHttpContextAccessor.Object.HttpContext.Request.Headers.Add("Cookie", cookieHeader);
 
             await _subject.CreateAsync();
 
             await _subject.DeleteByIdAsync("test");
 
-            var cookieContainer = new CookieContainer();
+            cookieContainer = new CookieContainer();
             var cookies = _mockHttpContextAccessor.Object.HttpContext.Response.Headers.Where(x => x.Key.Equals("Set-Cookie", StringComparison.OrdinalIgnoreCase)).Select(x => x.Value);
             cookieContainer.SetCookies(new Uri("http://server"), string.Join(",", cookies));
             _mockHttpContextAccessor.Object.HttpContext.Response.Headers.Clear();
 
-            var cookie = cookieContainer.GetCookies(new Uri("http://server")).Cast<Cookie>().Where(x => x.Name == _anonOptions.CheckAnonymousIdCookieName).FirstOrDefault();
+            cookie = cookieContainer.GetCookies(new Uri("http://server")).Cast<Cookie>().Where(x => x.Name == _anonOptions.CheckAnonymousIdCookieName).FirstOrDefault();
 
             cookie.Should().BeNull();
         }

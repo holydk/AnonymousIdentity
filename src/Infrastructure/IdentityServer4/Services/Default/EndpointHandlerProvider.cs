@@ -14,7 +14,7 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Services
     {
         #region Fields
 
-        private readonly IEnumerable<Endpoint> _endpoints;
+        private readonly IEnumerable<global::IdentityServer4.Hosting.Endpoint> _endpoints;
         private readonly IEnumerable<DecoratedEndpoint> _decoratedEndpoints;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private  HttpContext _httpContext => _httpContextAccessor.HttpContext;
@@ -24,7 +24,7 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Services
         #region Ctor
 
         public EndpointHandlerProvider(
-            IEnumerable<Endpoint> endpoints,
+            IEnumerable<global::IdentityServer4.Hosting.Endpoint> endpoints,
             IEnumerable<DecoratedEndpoint> decoratedEndpoints,
             IHttpContextAccessor httpContextAccessor
         )
