@@ -2,9 +2,9 @@
 The open source framework based on [IdentityServer4](https://github.com/IdentityServer/IdentityServer4) for anonymous token support.
 
 ## How to build
-AnonymousIdentity is built against the latest ASP.NET Core 2.
+AnonymousIdentity is built against the latest ASP.NET Core 3.
 
-* [Install](https://www.microsoft.com/net/download/core#/current) the latest .NET Core 2.x SDK
+* [Install](https://www.microsoft.com/net/download/core#/current) the latest .NET Core 3.x SDK
 * Run `build.ps1` in the root of the repo
 
 ## Getting Started
