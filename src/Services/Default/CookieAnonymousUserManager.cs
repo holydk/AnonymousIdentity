@@ -94,7 +94,7 @@ namespace AnonymousIdentity.Services
         /// </summary>
         /// <param name="user">The anonymous user.</param>
         /// <returns></returns>
-        public Task DeleteAsync(IAnonymousUser user)
+        public virtual Task DeleteAsync(IAnonymousUser user)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
 
@@ -106,7 +106,7 @@ namespace AnonymousIdentity.Services
         /// </summary>
         /// <param name="userId">The user ID to delete for.</param>
         /// <returns></returns>
-        public Task DeleteByIdAsync(string userId)
+        public virtual Task DeleteByIdAsync(string userId)
         {
             if (userId == null) throw new ArgumentNullException(nameof(userId));
 

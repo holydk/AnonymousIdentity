@@ -32,6 +32,12 @@ namespace AnonymousIdentity.Configuration
         public bool IncludeSharedSessionIdInAccessToken { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets a value indicating whether to the anonymous user is should be removed after signing in.
+        /// If true, the anonymous user will be deleted after signing in; otherwise, false. (defaults to true)
+        /// </summary>
+        public bool AllowRemoveAnonymousUserAfterSigningIn { get; set; } = true;
+
+        /// <summary>
         /// Gets or sets the name of the cookie used for the check shared session endpoint.
         /// </summary>
         /// <value></value>

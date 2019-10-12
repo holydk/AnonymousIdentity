@@ -58,7 +58,7 @@ namespace AnonymousIdentity.Hosting
                 if (principal?.IsAnonymous() == false)
                 {
                     var currentPrincipal = await _session.GetUserAsync();
-                    if (currentPrincipal?.IsAnonymous() == true)
+                    if (currentPrincipal?.IsAnonymous() == true && _options.AllowRemoveAnonymousUserAfterSigningIn)
                     {
                         await _anonUserManager.DeleteByIdAsync(currentPrincipal.GetSubjectId());
                     }
