@@ -85,7 +85,7 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Endpoints.Results
 
         private async Task RenderAuthorizeResponseAsync(HttpContext context)
         {
-            if (_response.Request.ResponseMode == "json")
+            if (_response.Request.ResponseMode == OidcConstants.ResponseModes.Json)
             {
                 context.Response.SetNoCache();
 
