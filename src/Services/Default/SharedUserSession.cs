@@ -23,12 +23,14 @@ namespace AnonymousIdentity.Services
 
         internal const string SessionIdKey = "shared_session_id";
         internal const string AnonymousIdKey = "anonymous_id";
+
         private readonly string _checkSessionCookieName;
-        private readonly HttpContext _httpContext;
         private readonly IAuthenticationSchemeProvider _schemes;
         private readonly IAuthenticationHandlerProvider _handlers;
         private readonly AnonymousIdentityServerOptions _options;
         private readonly ISystemClock _clock;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private HttpContext _httpContext => _httpContextAccessor.HttpContext;
         private ClaimsPrincipal _principal;
         private AuthenticationProperties _properties;
 
@@ -55,7 +57,7 @@ namespace AnonymousIdentity.Services
             _handlers = handlers;
             _options = options;
             _clock = clock;
-            _httpContext = httpContextAccessor.HttpContext;
+            _httpContextAccessor = httpContextAccessor;
             _checkSessionCookieName = _options.CheckSharedSessionCookieName;
         }
 

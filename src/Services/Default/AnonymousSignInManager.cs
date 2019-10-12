@@ -16,9 +16,10 @@ namespace AnonymousIdentity.Services
         #region Fields
 
         private readonly AnonymousIdentityServerOptions _options;
-        private readonly HttpContext _httpContext;
         private readonly IAuthenticationSchemeProvider _schemes;
         private readonly IAnonymousUserClaimsPrincipalFactory _anonPrincipalFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private HttpContext _httpContext => _httpContextAccessor.HttpContext;
 
         #endregion
 
@@ -38,7 +39,7 @@ namespace AnonymousIdentity.Services
             IAnonymousUserClaimsPrincipalFactory anonPrincipalFactory)
         {
             _options = options;
-            _httpContext = httpContextAccessor.HttpContext;
+            _httpContextAccessor = httpContextAccessor;
             _schemes = schemes;
             _anonPrincipalFactory = anonPrincipalFactory;
         }

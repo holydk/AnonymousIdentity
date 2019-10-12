@@ -17,7 +17,7 @@ namespace AnonymousIdentity.Infrastructure.IdentityServer4.Services
         private readonly IEnumerable<global::IdentityServer4.Hosting.Endpoint> _endpoints;
         private readonly IEnumerable<DecoratedEndpoint> _decoratedEndpoints;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private  HttpContext _httpContext => _httpContextAccessor.HttpContext;
+        private HttpContext _httpContext => _httpContextAccessor.HttpContext;
             
         #endregion
 
