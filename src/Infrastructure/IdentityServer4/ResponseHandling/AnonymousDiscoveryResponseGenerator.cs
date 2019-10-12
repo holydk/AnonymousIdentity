@@ -11,7 +11,7 @@ using IdentityServer4.ResponseHandling;
 namespace AnonymousIdentity.Infrastructure.IdentityServer4.ResponseHandling
 {
     /// <summary>
-///     /// this decorates the real discovery response generator to include additional claims.
+    /// this decorates the real discovery response generator to include additional claims.
     /// </summary>
     internal class AnonymousDiscoveryResponseGenerator : IDiscoveryResponseGenerator
     {

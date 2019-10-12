@@ -14,9 +14,10 @@ namespace AnonymousIdentity.Services
         #region Fields
 
         private readonly string _checkAnonymousIdCookieName;
-        private readonly HttpContext _httpContext;
         private readonly IAnonymousUserFactory _anonUserFactory;
         private readonly ISharedUserSession _sharedUserSession;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private HttpContext _httpContext => _httpContextAccessor.HttpContext;
 
         #endregion
 
@@ -35,7 +36,7 @@ namespace AnonymousIdentity.Services
             ISharedUserSession sharedUserSession,
             AnonymousIdentityServerOptions anonOptions)
         {
-            _httpContext = httpContextAccessor.HttpContext;
+            _httpContextAccessor = httpContextAccessor;
             _anonUserFactory = anonUserFactory;
             _sharedUserSession = sharedUserSession;
             _checkAnonymousIdCookieName = anonOptions.CheckAnonymousIdCookieName;
