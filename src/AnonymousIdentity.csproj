@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PackageId>AnonymousIdentity</PackageId>
     <Description>Anonymous token support for IdentityServer4</Description>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Authors>Dmitry Kiselev</Authors>
     <PackageTags>OAuth2;OAuth 2.0;OpenID Connect;Security;Identity;IdentityServer;anonymous_users;anonymous_tokens</PackageTags>
     <PackageProjectUrl>https://github.com/holydk/AnonymousIdentity</PackageProjectUrl>
@@ -19,11 +19,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityServer4" Version="3.0.1" />
+    <PackageReference Include="IdentityServer4" Version="3.1.0" />
   </ItemGroup>
 
 </Project>

@@ -3,6 +3,7 @@ using AnonymousIdentity.Extensions;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Endpoints.Results;
 using AnonymousIdentity.Infrastructure.IdentityServer4.Services;
 using AnonymousIdentity.Services;
+using IdentityServer4.Extensions;
 using IdentityServer4.Hosting;
 using IdentityServer4.ResponseHandling;
 using IdentityServer4.Validation;

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AnonymousIdentity.Extensions;
 using IdentityServer4.Configuration;
+using IdentityServer4.Extensions;
 using IdentityServer4.Hosting;
 using IdentityServer4.Models;
 using IdentityServer4.ResponseHandling;
